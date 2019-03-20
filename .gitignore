@@ -1,0 +1,6 @@
+idea/
+venv/Scripts/
+venv/Lib/
+venv/Include/
+venv/dependencies/
+venv/pyvenv.cfg

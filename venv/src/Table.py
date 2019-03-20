@@ -224,6 +224,8 @@ class Table():
                 ace = True
             min_hand_value += card_value
 
+        return min_hand_value + 10 <= 21 if ace and min_hand_value + 10 <= 21 else min_hand_value
+
     def prompt_player_to_split(self, human_player):
         user_response = input("Would you like to split? (Y/N): ")
 
