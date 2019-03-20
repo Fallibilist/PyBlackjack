@@ -1,4 +1,4 @@
-idea/
+.idea/
 venv/Scripts/
 venv/Lib/
 venv/Include/
