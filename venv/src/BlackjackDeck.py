@@ -1,6 +1,7 @@
 import random
 
-class BlackjackDeck():
+
+class BlackjackDeck:
 
     def __init__(self):
         SPADES = "\u2660"

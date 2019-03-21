@@ -1,7 +1,8 @@
 from Table import Table
 from UIEngine import *
 
-class Game():
+
+class Game:
     def __init__(self):
         pass
 

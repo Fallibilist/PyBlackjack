@@ -1,6 +1,7 @@
 from Utilities import get_value_of_card
 
-class Player():
+
+class Player:
 
     def __init__(self, human_player = False, name = "House", stack_amount = 500):
         self.human_player = human_player
@@ -13,31 +14,46 @@ class Player():
         self.bet = 0
         self.is_still_in_round = False
         self.last_stack_change = 0
+        self.eliminated_split_hand_index = -1
 
     def check_split_eligability(self):
-        return self.hands[0][0][0] == self.hands[0][1][0]
+        return self.hands[0][0][0][0] == self.hands[0][1][0][0]
 
     def check_double_eligability(self):
+        if len(self.hands) > 1:
+            return False
+
         first_card_value = get_value_of_card(self.hands[0][0][0][0])
         second_card_value = get_value_of_card(self.hands[0][1][0][0])
 
-        if first_card_value == 1:
-            first_card_value = 1
-        elif second_card_value == 1:
-            second_card_value = 1
+        card_sum = first_card_value + second_card_value
 
-        return sum == 9 or sum == 10 or sum == 11
+        return card_sum == 9 or card_sum == 10 or card_sum == 11
 
-    def bust_player(self, stack_change = 0):
-        self.is_still_in_round = False
-        for hand in self.hands:
-            for card in hand:
+    def bust_player(self, stack_change = 0, hand_index = -1):
+        if len(self.hands) == 1:
+            for hand in self.hands:
+                for card in hand:
+                    print(card)
+                    print(card[1])
+                    card[1] = True
+            self.is_still_in_round = False
+            self.stack_amount += stack_change
+            self.last_stack_change = stack_change
+
+        else:
+            if self.eliminated_split_hand_index != -1:
+                self.is_still_in_round = False
+
+            self.eliminated_split_hand_index = hand_index
+
+            for card in self.hands[hand_index]:
                 print(card)
                 print(card[1])
                 card[1] = True
-        self.stack_amount += stack_change
-        self.last_stack_change = stack_change
-        print('LOG: Player is being removed from game: ' + self.name)
+
+            self.stack_amount += stack_change / 2
+            self.last_stack_change += stack_change / 2
 
     def hand_to_string(self):
         hand_string = ""
@@ -53,3 +69,5 @@ class Player():
         self.is_still_in_round = True
         self.hands = []
         self.bet = 0
+        self.last_stack_change = 0
+        self.eliminated_split_hand_index = -1

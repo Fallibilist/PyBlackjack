@@ -3,7 +3,8 @@ from BlackjackDeck import BlackjackDeck
 from Utilities import get_value_of_card
 from UIEngine import *
 
-class Table():
+
+class Table:
 
     def __init__(self, number_of_human_players=1):
 
@@ -28,8 +29,6 @@ class Table():
         # Check for Blackjacks
         house_naturaled = self.check_for_natural(self.house_player)
         if house_naturaled:
-            print('LOG: House naturaled!')
-            # Todo move below
             for hand in self.house_player.hands:
                 for card in hand:
                     card[1] = True
@@ -54,18 +53,15 @@ class Table():
                     # Check if they can split or double down
                     if human_player.check_split_eligability():
                         self.prompt_player_to_split(human_player);
-                        pass
 
                     if human_player.check_double_eligability():
                         self.prompt_player_to_double_down(human_player);
-                        pass
 
                     # Prompt to hit, stay
                     self.prompt_user_to_act_and_check_bust(human_player)
 
             # Once it gets to the House they make their decision based on a formula
             if self.get_remaining_players() >= 2:
-                print('LOG: House is about to act since players remain')
                 self.prompt_house_to_act()
 
                 if self.house_player.is_still_in_round:
@@ -73,14 +69,15 @@ class Table():
 
                     for human_player in self.list_of_human_players:
                         if human_player.is_still_in_round:
-                            for hand in human_player.hands:
-                                player_hand_total = self.calculate_hand_total(hand)
-                                if player_hand_total < house_hand_total:
-                                    human_player.bust_player(-human_player.bet)
-                                elif player_hand_total > house_hand_total:
-                                    human_player.bust_player(human_player.bet)
-                                else:
-                                    human_player.bust_player()
+                            for count, hand in enumerate(human_player.hands):
+                                if count != human_player.eliminated_split_hand_index:
+                                    player_hand_total = self.calculate_hand_total(hand)
+                                    if player_hand_total < house_hand_total:
+                                        human_player.bust_player(-human_player.bet, count)
+                                    elif player_hand_total > house_hand_total:
+                                        human_player.bust_player(human_player.bet, count)
+                                    else:
+                                        human_player.bust_player(0, count)
                     self.house_player.bust_player()
                 else:
                     for human_player in self.list_of_human_players:
@@ -118,9 +115,9 @@ class Table():
     def prompt_user_to_act_and_check_bust(self, player):
         print_player_hands(self.house_player, self.list_of_human_players, player)
 
-        for hand in player.hands:
+        for count, hand in enumerate(player.hands):
             first_card = get_value_of_card(hand[0][0][0])
-            second_card = get_value_of_card(hand[1][0][0])
+            second_card = get_value_of_card(hand[1][0][0]) if len(hand) > 1 else 0
             min_hand_value = first_card + second_card
 
             while (min_hand_value <= 21):
@@ -139,9 +136,9 @@ class Table():
                     hand.append([new_card, True])
                     min_hand_value += get_value_of_card(new_card[0])
                     if min_hand_value > 21:
-                        player.bust_player(-player.bet)
+                        player.bust_player(-player.bet, count)
                 else:
-                    return
+                    break;
 
     def get_remaining_players(self):
         remaining_players = 0
@@ -227,14 +224,24 @@ class Table():
         return min_hand_value + 10 <= 21 if ace and min_hand_value + 10 <= 21 else min_hand_value
 
     def prompt_player_to_split(self, human_player):
+        print_player_hands(self.house_player, self.list_of_human_players, human_player)
+
         user_response = input("Would you like to split? (Y/N): ")
 
-        while (user_response.upper() != 'Y' and user_response.upper() != 'N'):
-            user_response = input("Invalid Reponse\nWould you like to split? (Y/N): ")
+        while user_response.upper() != 'Y' and user_response.upper() != 'N':
+            user_response = input("Invalid Response\nWould you like to split? (Y/N): ")
 
-        if (user_response.upper() == 'Y'):
-            pass
+        if user_response.upper() == 'Y':
+            human_player.hands.append([human_player.hands[0].pop()])
+            human_player.hands[0][0][1] = True
 
-    def prompt_player_to_double_down(self):
-        pass
+    def prompt_player_to_double_down(self, human_player):
+        print_player_hands(self.house_player, self.list_of_human_players, human_player)
 
+        user_response = input("Would you like to double down? (Y/N): ")
+
+        while user_response.upper() != 'Y' and user_response.upper() != 'N':
+            user_response = input("Invalid Response\nWould you like to double down? (Y/N): ")
+
+        if user_response.upper() == 'Y':
+            human_player.bet *= 2
