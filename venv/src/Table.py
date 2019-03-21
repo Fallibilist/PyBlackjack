@@ -55,7 +55,10 @@ class Table:
                         self.prompt_player_to_split(human_player);
 
                     if human_player.check_double_eligability():
-                        self.prompt_player_to_double_down(human_player);
+                        if human_player.stack >= human_player.bet * 2:
+                            self.prompt_player_to_double_down(human_player);
+                        else:
+                            print(human_player.name + ' does not have enough for a double down!')
 
                     # Prompt to hit, stay
                     self.prompt_user_to_act_and_check_bust(human_player)
@@ -160,7 +163,7 @@ class Table:
     def player_bets(self):
         for count, human_player in enumerate(self.list_of_human_players):
             if human_player.stack_amount < 2:
-                print('You do not have enough for the minimum bet! You will be removed.')
+                print(human_player.name + ' does not have enough for the minimum bet! They will be removed.')
                 human_player.bust_player()
             else:
                 self.prompt_user_to_bet(human_player)

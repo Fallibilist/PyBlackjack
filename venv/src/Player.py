@@ -31,7 +31,7 @@ class Player:
         return card_sum == 9 or card_sum == 10 or card_sum == 11
 
     def bust_player(self, stack_change = 0, hand_index = -1):
-        if len(self.hands) == 1:
+        if len(self.hands) <= 1:
             for hand in self.hands:
                 for card in hand:
                     card[1] = True
@@ -45,8 +45,9 @@ class Player:
 
             self.eliminated_split_hand_index = hand_index
 
-            for card in self.hands[hand_index]:
-                card[1] = True
+            if hand_index >= 0 and hand_index < len(self.hands):
+                for card in self.hands[hand_index]:
+                    card[1] = True
 
             self.stack_amount += stack_change / 2
             self.last_stack_change += stack_change / 2
