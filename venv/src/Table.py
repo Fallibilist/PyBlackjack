@@ -109,8 +109,10 @@ class Table:
                 has_ace = True
 
         if (min_hand_value > 21):
-            print("The House busts!")
+            print("\nThe House busts!")
             self.house_player.bust_player()
+        else:
+            print("\nThe House stops hitting with a hand of " + str(min_hand_value))
 
     # Returns true if the user busts
     def prompt_user_to_act_and_check_bust(self, player):
