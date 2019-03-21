@@ -18,7 +18,7 @@ def print_new_round():
 def round_results(house_player, list_of_human_players):
     print_player_hands(house_player, list_of_human_players)
 
-    print("Round Results:")
+    print("\nRound Results:")
     print("House Hand: " + house_player.hand_to_string())
 
     for human_player in list_of_human_players:
@@ -46,9 +46,6 @@ def print_player_hands(house_player, list_of_human_players, player=False):
     add_spacing_dependent_on_hand(HOUSE, row_dictionary, len(house_player.hands[0]))
     add_cards_for_hand(house_player.hands[0], row_dictionary, len(house_player.hands[0]))
 
-    if player != False:
-        print(player.name + '\'s turn')
-
     multiple_hands = False
 
     for count, human_player in enumerate(list_of_human_players):
@@ -57,14 +54,14 @@ def print_player_hands(house_player, list_of_human_players, player=False):
 
         is_current_player = player != False and player.name == human_player.name
 
-        label = human_player.name
-        # if not human_player.is_still_in_round:
-        #     label = strike(label)
-
         max_cards = get_max_cards(human_player)
 
-        add_spacing_dependent_on_hand(HOUSE, row_dictionary, max_cards, is_current_player)
+        add_spacing_dependent_on_hand(human_player.name, row_dictionary, max_cards, is_current_player)
         add_cards_for_hand(human_player.hands[0], row_dictionary, max_cards, is_current_player)
+
+    print()
+    if player != False:
+        print(player.name + '\'s turn')
 
     print(row_dictionary['horizontal_border_row'])
     print(row_dictionary['label_row'])

@@ -109,13 +109,13 @@ class Table:
                 has_ace = True
 
         if (min_hand_value > 21):
+            print("The House busts!")
             self.house_player.bust_player()
 
     # Returns true if the user busts
     def prompt_user_to_act_and_check_bust(self, player):
-        print_player_hands(self.house_player, self.list_of_human_players, player)
-
         for count, hand in enumerate(player.hands):
+            print_player_hands(self.house_player, self.list_of_human_players, player)
             first_card = get_value_of_card(hand[0][0][0])
             second_card = get_value_of_card(hand[1][0][0]) if len(hand) > 1 else 0
             min_hand_value = first_card + second_card
@@ -131,11 +131,14 @@ class Table:
                     user_response = input("Invalid Reponse\nWould you like to hit or stay? (H or S): ")
 
                 if user_response.upper() == 'H':
-                    # Draw card
                     new_card = self.deck.draw_card()
                     hand.append([new_card, True])
                     min_hand_value += get_value_of_card(new_card[0])
+
+                    print_player_hands(self.house_player, self.list_of_human_players, player)
+
                     if min_hand_value > 21:
+                        print(player.name + " busts!")
                         player.bust_player(-player.bet, count)
                 else:
                     break;
@@ -164,7 +167,7 @@ class Table:
         human_player.bet = 0
         while (human_player.bet < 2):
             userResponse = input(
-                "\n(" + human_player.name + ") Enter a bet from $2-" + str(human_player.stack_amount) + ": ")
+                "\n(" + human_player.name + ") Enter a bet from $2 to " + str(human_player.stack_amount) + ": ")
             human_player.bet = self.validate_bet(userResponse, human_player.stack_amount)
 
         human_player.is_still_in_round = True

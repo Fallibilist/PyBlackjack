@@ -34,8 +34,6 @@ class Player:
         if len(self.hands) == 1:
             for hand in self.hands:
                 for card in hand:
-                    print(card)
-                    print(card[1])
                     card[1] = True
             self.is_still_in_round = False
             self.stack_amount += stack_change
@@ -48,12 +46,15 @@ class Player:
             self.eliminated_split_hand_index = hand_index
 
             for card in self.hands[hand_index]:
-                print(card)
-                print(card[1])
                 card[1] = True
 
             self.stack_amount += stack_change / 2
             self.last_stack_change += stack_change / 2
+
+        if stack_change > 0:
+            print(self.name + " has been paid out $" + str(stack_change) + "\n")
+        elif stack_change < 0:
+            print(self.name + " has been deducted $" + str(stack_change) + "\n")
 
     def hand_to_string(self):
         hand_string = ""
